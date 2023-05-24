@@ -1,14 +1,43 @@
+const express = require('express');
 const fs = require ("fs");
 const path = require('path');
 const router = require('express').Router();
 
-router.get('/api/notes', async (req, res) => {
-    const dbJson = await JSON.parse(fs.readFileSync("db/db.json", "utf8"));
-    res.json(dbJson);
+// Reads the notes from the JSON file
+function getNotes() {
+    const data = fs.readFileSync(
+        path.join(__dirname, '../db/db.json'),
+        'utf8'
+    );
+    return JSON.parse(data);
+}
+
+// Writes notes to the JSON file
+function saveNotes(notes) {
+    fs.writeFileSync(
+        path.join(__dirname, '../db/db.json'),
+        JSON.stringify(notes),
+        'utf8'
+    );
+}
+
+// Creates a new note
+router.post('/api/notes', (req, res) => {
+    const notes = getNotes();
+    const newNote = req.body;
+    newNote.id = Date.now();
+    notes.push(newNote);
+    saveNotes(notes);
+    res.json(newNote);
 });
 
-router.post('/api/notes', (req, res) => {
-    const dbJson = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
-})
+// Deletes notes
+router.delete('/api/notes/:id', (req, res) => {
+    const notes = getNotes();
+    const noteId = parseInt(req.params.id);
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
+    saveNotes(updatedNotes);
+    res.sendStatus(204);
+});
 
 module.exports = router;
