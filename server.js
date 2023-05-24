@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use('/api', apiRoutes);
-app.use('/notes', htmlRoutes);
+app.use('/', htmlRoutes);
 
 // GET route for homepage
 app.get('/', (req, res) => {

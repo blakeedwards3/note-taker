@@ -21,8 +21,14 @@ function saveNotes(notes) {
     );
 }
 
+// Get all the notes
+router.get('/notes', (req, res) => {
+    const notes = getNotes();
+    res.status(200).json(notes);
+});
+
 // Creates a new note
-router.post('/api/notes', (req, res) => {
+router.post('/notes', (req, res) => {
     const notes = getNotes();
     const newNote = req.body;
     newNote.id = Date.now();
@@ -32,7 +38,7 @@ router.post('/api/notes', (req, res) => {
 });
 
 // Deletes notes
-router.delete('/api/notes/:id', (req, res) => {
+router.delete('/notes/:id', (req, res) => {
     const notes = getNotes();
     const noteId = parseInt(req.params.id);
     const updatedNotes = notes.filter((note) => note.id !== noteId);
